@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CryptoVault — File Encryption · CyberAce</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234f46e5'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-family='Inter' font-weight='700' font-size='52' fill='white'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav><div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%;"><a href="../index.html" class="logo"><div class="logo-mark">C</div><span>Cyber<span class="logo-accent">Ace</span></span></a><a href="../index.html#tools" class="btn btn-ghost text-sm"><i class="fa-solid fa-arrow-left"></i> All Tools</a></div></nav>
+<div class="container">
+<section class="page-header">
+    <div style="display:flex;gap:1rem;align-items:flex-start;">
+        <div class="bento-icon" style="width:52px;height:52px;border-radius:12px;font-size:1.25rem;background:#f0fdf4;color:var(--success);"><i class="fa-solid fa-lock"></i></div>
+        <span class="tool-badge"><i class="fa-solid fa-shield-halved"></i> Client-Side AES</span>
+    </div>
+    <h1>Crypto<span class="serif" style="color:var(--success);">Vault</span></h1>
+    <p class="desc">Drag-and-drop file encryption with AES-256-GCM via the browser Web Crypto API. Nothing leaves your device — no uploads, no servers, no telemetry.</p>
+</section>
+<div class="grid-2">
+<div>
+    <div class="upload-zone" id="dz"><i class="fa-solid fa-file-arrow-up"></i><p><strong>Drop file to encrypt or decrypt</strong></p><small>Any file type · .cvault files for decryption</small><input type="file" id="file"></div>
+    <p id="fn" class="mono text-sm" style="color:var(--ink-tertiary);margin-top:0.5rem;display:none;"></p>
+    <div class="mt-lg"><label class="lbl">Password</label><input type="password" id="pw" class="input" placeholder="Strong passphrase recommended"></div>
+    <div class="grid grid-cols-2 gap-3 mt-lg">
+        <button id="enc" class="btn btn-primary" style="justify-content:center;padding:0.9rem;"><i class="fa-solid fa-lock"></i> Encrypt (AES-256)</button>
+        <button id="dec" class="btn btn-secondary" style="justify-content:center;padding:0.9rem;"><i class="fa-solid fa-lock-open"></i> Decrypt .cvault</button>
+    </div>
+    <div class="card mt-lg" style="padding:0.9rem;font-size:0.8rem;color:var(--ink-tertiary);display:flex;gap:0.6rem;align-items:flex-start;"><i class="fa-solid fa-bolt mt-0.5" style="color:var(--success);"></i><p>PBKDF2-SHA256 600k iterations · AES-256-GCM with random IV · 0% server exposure.</p></div>
+</div>
+<div><div class="result-panel" id="res"><div style="text-align:center;padding:4rem 2rem;color:var(--ink-tertiary);"><i class="fa-solid fa-lock" style="font-size:2.5rem;opacity:0.15;margin-bottom:1rem;display:inline-block;background:linear-gradient(135deg,var(--success),#10b981);-webkit-background-clip:text;background-clip:text;color:transparent;"></i><p style="font-size:0.92rem;">Drop a file and enter a password to begin.</p></div></div></div>
+</div>
+<section>
+<h3 style="font-size:1.5rem;margin-bottom:1.25rem;font-weight:600;letter-spacing:-0.02em;">How it works</h3>
+<div class="grid grid-cols-4 gap-3">
+<div class="feature-card" style="text-align:left;"><span class="mono" style="font-size:2rem;font-weight:600;color:var(--accent);display:block;margin-bottom:0.5rem;">01</span><h4>Select</h4><p style="font-size:0.84rem;color:var(--ink-tertiary);line-height:1.5;">Drop any file — docs, images, archives.</p></div>
+<div class="feature-card" style="text-align:left;"><span class="mono" style="font-size:2rem;font-weight:600;color:var(--accent);display:block;margin-bottom:0.5rem;">02</span><h4>Password</h4><p style="font-size:0.84rem;color:var(--ink-tertiary);line-height:1.5;">Your passphrase derives a 256-bit key.</p></div>
+<div class="feature-card" style="text-align:left;"><span class="mono" style="font-size:2rem;font-weight:600;color:var(--accent);display:block;margin-bottom:0.5rem;">03</span><h4>Encrypt</h4><p style="font-size:0.84rem;color:var(--ink-tertiary);line-height:1.5;">AES-256-GCM with random salt and IV.</p></div>
+<div class="feature-card" style="text-align:left;"><span class="mono" style="font-size:2rem;font-weight:600;color:var(--accent);display:block;margin-bottom:0.5rem;">04</span><h4>Download</h4><p style="font-size:0.84rem;color:var(--ink-tertiary);line-height:1.5;">.cvault file — only the password can open.</p></div>
+</div>
+</section>
+<footer><div class="flex-between flex-wrap gap-3"><a href="../index.html" class="back-link" style="margin-bottom:0;"><i class="fa-solid fa-arrow-left"></i> All tools</a><span>© 2026 CyberAce</span></div></footer>
+</div>
+<script>
+const dz=document.getElementById('dz'),fi=document.getElementById('file'),fn=document.getElementById('fn'),pw=document.getElementById('pw'),enc=document.getElementById('enc'),dec=document.getElementById('dec'),res=document.getElementById('res');
+let file=null;
+['dragenter','dragover'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('drag');}));
+['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.remove('drag');}));
+dz.addEventListener('drop',ev=>{if(ev.dataTransfer.files[0]){file=ev.dataTransfer.files[0];showFile();}});
+fi.addEventListener('change',ev=>{if(ev.target.files[0]){file=ev.target.files[0];showFile();}});
+function showFile(){fn.textContent=`${file.name} (${(file.size/1024).toFixed(1)} KB)`;fn.style.display='block';dz.querySelector('p strong').textContent=file.name;dz.querySelector('small').textContent=file.type||'File ready';}
+function buf2hex(b){return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
+function hex2buf(h){return new Uint8Array(h.match(/.{2}/g).map(b=>parseInt(b,16)));}
+async function getKey(salt){const km=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw.value),false,false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:600000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);}
+enc.addEventListener('click',async()=>{if(!file||!pw.value)return;enc.disabled=true;enc.innerHTML='<span class="loader"></span>';res.innerHTML='<div class="thinking"><span class="loader"></span><span>Encrypting…</span></div>';
+const buf=await file.arrayBuffer(),salt=crypto.getRandomValues(new Uint8Array(16)),iv=crypto.getRandomValues(new Uint8Array(12)),key=await getKey(salt),ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,buf);
+const out=new Blob([salt,iv,new Uint8Array(ct)],{type:'application/octet-stream'});const url=URL.createObjectURL(out);
+res.innerHTML=`<div style="padding:1rem;"><label class="lbl">✓ Encrypted</label><div class="finding" style="margin-top:0.5rem;"><i class="fa-solid fa-file-shield" style="color:var(--success);"></i><div><strong>${file.name}.cvault</strong><p class="mono text-sm" style="margin:0.25rem 0 0;color:var(--ink-tertiary);">AES-256-GCM · PBKDF2 600k · ${(out.size/1024).toFixed(1)} KB</p></div></div><a href="${url}" download="${file.name}.cvault" class="btn btn-primary mt-lg" style="justify-content:center;width:100%;padding:0.9rem;"><i class="fa-solid fa-download"></i> Download .cvault</a></div>`;
+enc.disabled=false;enc.innerHTML='<i class="fa-solid fa-lock"></i> Encrypt (AES-256)';});
+dec.addEventListener('click',async()=>{if(!file||!pw.value)return;dec.disabled=true;dec.innerHTML='<span class="loader"></span>';res.innerHTML='<div class="thinking"><span class="loader"></span><span>Decrypting…</span></div>';
+try{const buf=await file.arrayBuffer(),u8=new Uint8Array(buf),salt=u8.slice(0,16),iv=u8.slice(16,28),ct=u8.slice(28),key=await getKey(salt),pt=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,ct);
+const out=new Blob([pt]),url=URL.createObjectURL(out);const dn=file.name.replace(/\.cvault$/i,'')+'.decrypted';
+res.innerHTML=`<div style="padding:1rem;"><label class="lbl">✓ Decrypted</label><div class="finding" style="margin-top:0.5rem;"><i class="fa-solid fa-file" style="color:var(--success);"></i><div><strong>${dn}</strong><p class="mono text-sm" style="margin:0.25rem 0 0;color:var(--ink-tertiary);">${(out.size/1024).toFixed(1)} KB recovered</p></div></div><a href="${url}" download="${dn}" class="btn btn-primary mt-lg" style="justify-content:center;width:100%;padding:0.9rem;"><i class="fa-solid fa-download"></i> Download</a></div>`;}
+catch(e){res.innerHTML=`<div style="padding:1rem;"><label class="lbl" style="color:var(--danger);">Decryption failed</label><p style="margin-top:0.5rem;color:var(--ink-tertiary);font-size:0.9rem;">Wrong password or corrupted file.</p></div>`;}
+dec.disabled=false;dec.innerHTML='<i class="fa-solid fa-lock-open"></i> Decrypt .cvault';});
+</script>
+</body>
+</html>

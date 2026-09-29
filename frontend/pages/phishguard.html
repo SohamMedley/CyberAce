@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PhishGuard AI — CyberAce</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234f46e5'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-family='Inter' font-weight='700' font-size='52' fill='white'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav><div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+    <a href="../index.html" class="logo"><div class="logo-mark">C</div><span>Cyber<span class="logo-accent">Ace</span></span></a>
+    <a href="../index.html#tools" class="btn btn-ghost text-sm"><i class="fa-solid fa-arrow-left"></i> All Tools</a>
+</div></nav>
+<div class="container">
+<section class="page-header">
+    <div style="display:flex;gap:1rem;align-items:flex-start;margin-bottom:0.5rem;">
+        <div class="bento-icon" style="width:52px;height:52px;border-radius:12px;font-size:1.25rem;background:#eef0ff;color:var(--accent);"><i class="fa-solid fa-envelope-open-text"></i></div>
+        <span class="tool-badge"><i class="fa-solid fa-bolt"></i> Phishing Detection</span>
+    </div>
+    <h1>PhishGuard <span class="serif" style="background:linear-gradient(135deg,var(--accent),#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent;">AI</span></h1>
+    <p class="desc">Drop a screenshot, paste an email, upload an email PDF, or share a suspicious message from WhatsApp, Instagram, or SMS. Vision and text AI detect phishing indicators in real time with MITRE ATT&CK mapping and plain-English remediation.</p>
+</section>
+<section style="margin-top:-1rem;">
+<div class="grid-2">
+    <div>
+        <div class="upload-zone" id="dz">
+            <i class="fa-solid fa-cloud-arrow-up"></i>
+            <p><strong>Drop file or screenshot here</strong></p>
+            <small>PNG/JPG · Email .eml · .pdf · .txt · HTML</small>
+            <input type="file" id="file" accept="image/*,.pdf,.txt,.eml,.msg,.html">
+        </div>
+        <p id="fname" class="mono" style="font-size:0.75rem;color:var(--ink-tertiary);margin-top:0.5rem;display:none;"></p>
+        <div class="mt-lg">
+            <label class="lbl">Or paste message / URL</label>
+            <textarea id="text" class="textarea" placeholder="Paste email content, message, or URL..."></textarea>
+        </div>
+        <button id="go" class="btn btn-primary mt-lg" style="width:100%;justify-content:center;padding:0.9rem;"><i class="fa-solid fa-magnifying-glass"></i> Analyze for Phishing</button>
+        <div class="card mt-lg" style="padding:0.9rem;font-size:0.8rem;color:var(--ink-tertiary);display:flex;gap:0.6rem;align-items:flex-start;"><i class="fa-solid fa-shield-halved mt-0.5" style="color:var(--accent);"></i><p>Llama 3.2 11B Vision for images, Llama 3.1 8B for text. Content is sent only for analysis and never stored.</p></div>
+    </div>
+    <div><div class="result-panel" id="res">
+        <div style="text-align:center;padding:4rem 2rem;color:var(--ink-tertiary);"><i class="fa-solid fa-envelope-open-text" style="font-size:2.5rem;opacity:0.1;margin-bottom:1rem;display:inline-block;background:linear-gradient(135deg,var(--accent),#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent;"></i><p style="font-size:0.92rem;">Upload or paste content to see AI analysis.</p></div>
+    </div></div>
+</div>
+</section>
+<section>
+<h3 style="font-size:1.5rem;margin-bottom:1.25rem;font-weight:600;letter-spacing:-0.02em;">What PhishGuard detects</h3>
+<div class="grid grid-cols-3 gap-3" class="feature-grid">
+    <div class="feature-card"><i class="fa-solid fa-triangle-exclamation feature-icon"></i><h4>Urgency Tactics</h4><p style="font-size:0.84rem;color:var(--ink-tertiary);line-height:1.5;">Time pressure, account threats, prize language designed to bypass critical thinking.</p></div>
+    <div class="feature-card"><i class="fa-solid fa-user-secret feature-icon"></i><h4>Impersonation</h4><p style="font-size:0.84rem;color:var(--ink-tertiary);line-height:1.5;">Vision AI detects logos; text flags look-alike domains and greetings.</p></div>
+    <div class="feature-card"><i class="fa-solid fa-link feature-icon"></i><h4>Obfuscated Links</h4><p style="font-size:0.84rem;color:var(--ink-tertiary);line-height:1.5;">Shorteners, raw IPs, typosquatting, redirect chains, mismatched text.</p></div>
+    <div class="feature-card"><i class="fa-solid fa-project-diagram feature-icon"></i><h4>MITRE Mapping</h4><p style="font-size:0.84rem;color:var(--ink-tertiary);line-height:1.5;">Every finding maps to ATT&CK for professional threat intel.</p></div>
+    <div class="feature-card"><i class="fa-solid fa-comment feature-icon"></i><h4>Plain English</h4><p style="font-size:0.84rem;color:var(--ink-tertiary);line-height:1.5;">Clear explanations for non-technical users with actionable steps.</p></div>
+    <div class="feature-card"><i class="fa-solid fa-image feature-icon"></i><h4>Screenshot Support</h4><p style="font-size:0.84rem;color:var(--ink-tertiary);line-height:1.5;">Vision model reads full message context, not just raw text.</p></div>
+</div>
+</section>
+<footer><div class="flex-between flex-wrap gap-3"><a href="../index.html" class="back-link" style="margin-bottom:0;"><i class="fa-solid fa-arrow-left"></i> All tools</a><span>© 2026 CyberAce</span></div></footer>
+</div>
+<script src="../js/main.js"></script>
+<script>
+const dz=document.getElementById('dz'),fi=document.getElementById('file'),fn=document.getElementById('fname'),ti=document.getElementById('text'),btn=document.getElementById('go'),resEl=document.getElementById('res');
+let imgD=null,docT=null;
+['dragenter','dragover'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('drag');}));
+['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.remove('drag');}));
+dz.addEventListener('drop',ev=>{if(ev.dataTransfer.files[0])handle(ev.dataTransfer.files[0]);});
+fi.addEventListener('change',ev=>{if(ev.target.files[0])handle(ev.target.files[0]);});
+async function handle(f){fn.textContent=`${f.name} (${(f.size/1024).toFixed(1)} KB)`;fn.style.display='block';
+if(f.type.startsWith('image/')){const u=await readDataURL(f);imgD={data:u.split(',')[1],mime:f.type};dz.innerHTML=`<img src="${u}" style="max-height:140px;max-width:100%;border-radius:10px;" alt="preview"><input type="file" id="file" accept="image/*,.pdf,.txt,.eml,.msg,.html">`;dz.querySelector('input').addEventListener('change',e=>{if(e.target.files[0])handle(e.target.files[0]);});}
+else if(f.type==='application/pdf'){docT=await window.pdfText(f);dz.innerHTML=`<i class="fa-solid fa-file-pdf" style="font-size:1.75rem;color:var(--danger);margin-bottom:0.5rem;display:block;"></i><p><strong>${f.name}</strong></p><small>PDF loaded for analysis</small><input type="file" id="file" accept="image/*,.pdf,.txt,.eml,.msg,.html">`;}
+else{docT=await readText(f);ti.value=docT.slice(0,5000);dz.innerHTML=`<i class="fa-solid fa-file-lines" style="font-size:1.75rem;color:var(--accent);margin-bottom:0.5rem;display:block;"></i><p><strong>${f.name}</strong></p><small>Text loaded</small><input type="file" id="file" accept="image/*,.pdf,.txt,.eml,.msg,.html">`;}}
+btn.addEventListener('click',async()=>{
+const t=ti.value.trim();if(!t&&!imgD&&!docT){ti.style.borderColor='var(--danger)';setTimeout(()=>ti.style.borderColor='',800);return;}
+btn.disabled=true;btn.innerHTML='<span class="loader"></span> Analyzing…';resEl.innerHTML='<div class="thinking"><span class="loader"></span><span>Scanning indicators, checking domains, mapping MITRE…</span></div>';
+const isI=!!imgD,sys=`You are a senior cybersecurity phishing analyst. Analyze the provided ${isI?'screenshot':'message/email/URL'}. Return ONLY valid JSON: {"risk_score":0-100,"risk_level":"Low/Medium/High/Critical","verdict":"1-2 sentence verdict","indicators":[detected techniques],"red_flags":[specific suspicious elements],"mitre":"MITRE ATT&CK T-ID","action":"remediation"}. If legitimate say so.`;
+const prompt=isI?'Analyze this phishing screenshot.':`Analyze:\n\n${t||docT||''}`;
+try{const r=await fetch(window.API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:sys,prompt,json:true,image:isI?imgD.data:undefined,mime:isI?imgD.mime:undefined})});const d=await r.json();if(d.error)throw new Error();let a=JSON.parse(d.result.replace(/```json/g,'').replace(/```/g,'').trim());render(a);}
+catch(e){render({risk_score:50,risk_level:'Medium',verdict:'AI unavailable. Set GROQ_API_KEY as a Render Secret File (filename: GROQ_API_KEY, all caps) to enable AI analysis.',indicators:['AI not configured — add Groq key'],red_flags:['Configure GROQ_API_KEY'],mitre:'T1566 — Phishing',action:'Do not click links. Verify sender via official channels.'});}
+btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-magnifying-glass"></i> Analyze for Phishing';});
+function render(a){const s=a.risk_score||0,l=a.risk_level||'Medium';const pc=l==='Critical'?'pill-critical':l==='High'?'pill-high':l==='Medium'?'pill-medium':'pill-low';const c=s>=70?'var(--danger)':s>=40?'var(--warning)':'var(--success)';
+let h=`<div class="flex-between mb-lg"><div><label class="lbl">Risk Assessment</label><p style="font-size:2.8rem;font-weight:600;letter-spacing:-0.03em;line-height:1;color:${c};">${s}<span style="font-size:1.1rem;color:var(--ink-tertiary);font-weight:400;">/100</span></p></div><span class="pill ${pc}">${l}</span></div><div class="meter"><div class="meter-fill" style="width:${s}%;background:${c};"></div></div><p style="line-height:1.7;margin:1.5rem 0;font-size:0.95rem;">${a.verdict}</p>`;
+if(a.indicators?.length){h+='<label class="lbl">Detected Techniques</label>';a.indicators.forEach(i=>h+=`<div class="finding"><i class="fa-solid fa-triangle-exclamation" style="color:var(--warning);margin-top:0.15rem;"></i><span>${typeof i==='string'?i:i.name+': '+i.explanation}</span></div>`);}
+if(a.red_flags?.length){h+='<label class="lbl mt-lg">Red Flags</label>';a.red_flags.forEach(r=>h+=`<div class="finding"><i class="fa-solid fa-circle-xmark" style="color:var(--danger);margin-top:0.15rem;"></i>${r}</div>`);}
+if(a.mitre)h+=`<div class="mt-lg"><label class="lbl">MITRE ATT&CK</label><br><span class="pill pill-info" style="margin-top:0.3rem;display:inline-block;">${a.mitre}</span></div>`;
+if(a.action)h+=`<div style="margin-top:1.25rem;padding:0.9rem;border-radius:var(--r-md);background:#f0fdf4;border:1px solid #bbf7d0;color:#166534;font-size:0.88rem;"><strong style="display:block;margin-bottom:0.25rem;"><i class="fa-solid fa-circle-check mr-1"></i>Recommended Action</strong>${a.action}</div>`;
+resEl.innerHTML=h;}
+</script>
+</body>
+</html>

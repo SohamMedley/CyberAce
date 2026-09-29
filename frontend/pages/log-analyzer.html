@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ThreatLens — Log Analyzer · CyberAce</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234f46e5'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-family='Inter' font-weight='700' font-size='52' fill='white'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav><div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%;"><a href="../index.html" class="logo"><div class="logo-mark">C</div><span>Cyber<span class="logo-accent">Ace</span></span></a><a href="../index.html#tools" class="btn btn-ghost text-sm"><i class="fa-solid fa-arrow-left"></i> All Tools</a></div></nav>
+<div class="container">
+<section class="page-header">
+    <div style="display:flex;gap:1rem;align-items:flex-start;">
+        <div class="bento-icon" style="width:52px;height:52px;border-radius:12px;font-size:1.25rem;background:#fef2f2;color:var(--danger);"><i class="fa-solid fa-chart-line"></i></div>
+        <span class="tool-badge"><i class="fa-solid fa-terminal"></i> Log Analysis</span>
+    </div>
+    <h1>Threat<span class="serif" style="color:var(--danger);">Lens</span></h1>
+    <p class="desc">Upload server logs, web access logs, firewall logs, or EVTX/JSON logs. AI extracts IOCs (IPs, hashes, domains, user agents, CVE numbers), identifies attack patterns, and maps them to MITRE ATT&CK.</p>
+</section>
+<div class="grid-2">
+    <div>
+        <div class="upload-zone" id="dz"><i class="fa-solid fa-file-arrow-up"></i><p><strong>Drop log file here</strong></p><small>.log · .txt · .json · .csv · .evtx</small><input type="file" id="file" accept=".log,.txt,.json,.csv,.evtx"></div>
+        <p id="fname" class="mono" style="font-size:0.75rem;color:var(--ink-tertiary);margin-top:0.5rem;display:none;"></p>
+        <div class="mt-lg"><label class="lbl">Or paste log content</label><textarea class="textarea" id="log" placeholder="Paste access log, auth log, etc..."></textarea></div>
+        <button id="go" class="btn btn-primary mt-lg" style="width:100%;justify-content:center;padding:0.9rem;"><i class="fa-solid fa-microchip"></i> Analyze with AI</button>
+        <div class="card mt-lg" style="padding:0.9rem;font-size:0.8rem;color:var(--ink-tertiary);display:flex;gap:0.6rem;align-items:flex-start;"><i class="fa-solid fa-sitemap mt-0.5" style="color:var(--danger);"></i><p>Supports Apache, Nginx, SSH auth, Windows Event, firewall, and custom logs.</p></div>
+    </div>
+    <div><div class="result-panel" id="res"><div style="text-align:center;padding:4rem 2rem;color:var(--ink-tertiary);"><i class="fa-solid fa-chart-line" style="font-size:2.5rem;opacity:0.1;margin-bottom:1rem;display:inline-block;background:linear-gradient(135deg,var(--danger),#f59e0b);-webkit-background-clip:text;background-clip:text;color:transparent;"></i><p style="font-size:0.92rem;">Drop a log to begin.</p></div></div></div>
+</div>
+<footer><div class="flex-between flex-wrap gap-3"><a href="../index.html" class="back-link" style="margin-bottom:0;"><i class="fa-solid fa-arrow-left"></i> All tools</a><span>© 2026 CyberAce</span></div></footer>
+</div>
+<script src="../js/main.js"></script>
+<script>
+const dz=document.getElementById('dz'),fi=document.getElementById('file'),fn=document.getElementById('fname'),log=document.getElementById('log'),btn=document.getElementById('go'),resEl=document.getElementById('res');
+let ct=null;
+['dragenter','dragover'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('drag');}));
+['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.remove('drag');}));
+dz.addEventListener('drop',ev=>{if(ev.dataTransfer.files[0])h(ev.dataTransfer.files[0]);});
+fi.addEventListener('change',ev=>{if(ev.target.files[0])h(ev.target.files[0]);});
+async function h(f){fn.textContent=`${f.name} (${(f.size/1024).toFixed(1)} KB)`;fn.style.display='block';fn.style.marginBottom='0.5rem';ct=await readText(f);log.value=ct.slice(0,20000);
+dz.innerHTML=`<i class="fa-solid fa-file-lines" style="font-size:1.75rem;color:var(--danger);margin-bottom:0.5rem;display:block;"></i><p><strong>${f.name}</strong></p><small>Log loaded · ${f.size} bytes</small><input type="file" id="file" accept=".log,.txt,.json,.csv,.evtx">`;
+dz.querySelector('input').addEventListener('change',e=>{if(e.target.files[0])h(e.target.files[0]);});}
+btn.addEventListener('click',async()=>{const t=log.value.trim();if(!t){log.style.borderColor='var(--danger)';setTimeout(()=>log.style.borderColor='',800);return;}
+btn.disabled=true;btn.innerHTML='<span class="loader"></span> Triage…';resEl.innerHTML='<div class="thinking"><span class="loader"></span><span>Parsing log format, extracting IOCs, correlating events…</span></div>';
+const sys='You are a SOC analyst triaging logs. Return JSON: {"log_type":"format name","threat_level":"Low/Medium/High/Critical","verdict":"overall assessment","iocs":{"ips":[suspicious],"domains":[suspicious],"hashes":[suspicious],"user_agents":[suspicious]},"events":[{"time":"timestamp or line","event":"what happened","severity":"info/warn/crit","evidence":"matching line"}],"mitre":["ATT&CK T-IDs"],"recommendations":[actions]}. If logs look normal state benign.';
+const prompt=`Analyze these logs (first 12K chars):\n\n${t.slice(0,12000)}`;
+try{const r=await fetch(window.API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:sys,prompt,json:true})});const d=await r.json();if(d.error)throw 0;let a=JSON.parse(d.result.replace(/```json/g,'').replace(/```/g,'').trim());render(a);}
+catch(e){render({log_type:'Unknown',threat_level:'Medium',verdict:'AI unavailable. Add GROQ_API_KEY as a Render Secret File.',iocs:{ips:[],domains:[],hashes:[],user_agents:[]},events:[],mitre:['T1071'],recommendations:['Add Groq key for real analysis']});}
+btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-microchip"></i> Analyze with AI';});
+function render(a){const l=a.threat_level||'Low';const pc=l==='Critical'?'pill-critical':l==='High'?'pill-high':l==='Medium'?'pill-medium':'pill-low';
+let h=`<div class="flex-between mb-lg"><div><label class="lbl">Log Type & Assessment</label><h3 style="font-size:1.5rem;margin-top:0.1rem;">${a.log_type||'Logs'}</h3></div><span class="pill ${pc}">${l}</span></div><p style="line-height:1.7;margin-bottom:1.5rem;font-size:0.95rem;">${a.verdict}</p>`;
+const iocs=a.iocs||{};if((iocs.ips||[]).length){h+='<label class="lbl">Suspicious IPs</label><div class="ioc-grid">';iocs.ips.forEach(i=>h+=`<span class="ioc"><i class="fa-solid fa-globe"></i> ${i}</span>`);h+='</div>';}
+if((iocs.domains||[]).length){h+='<label class="lbl mt-lg">Suspicious Domains</label><div class="ioc-grid">';iocs.domains.forEach(d=>h+=`<span class="ioc"><i class="fa-solid fa-globe"></i> ${d}</span>`);h+='</div>';}
+if((iocs.hashes||[]).length){h+='<label class="lbl mt-lg">Hashes</label><div class="ioc-grid">';iocs.hashes.forEach(x=>h+=`<span class="ioc mono text-sm"><i class="fa-solid fa-hashtag"></i> ${x}</span>`);h+='</div>';}
+if((iocs.user_agents||[]).length){h+='<label class="lbl mt-lg">User Agents</label>';iocs.user_agents.forEach(u=>h+=`<div class="finding"><i class="fa-solid fa-desktop"></i><span class="mono text-sm">${u}</span></div>`);}
+if((a.events||[]).length){h+='<label class="lbl mt-lg">Key Events</label>';a.events.forEach(e=>{const sc=e.severity==='crit'?'pill-critical':e.severity==='warn'?'pill-medium':'pill-info';h+=`<div class="finding"><span class="pill ${sc}" style="font-size:0.7rem;">${e.severity||'info'}</span><div><strong>${e.event}</strong>${e.time?`<span class="mono text-sm" style="margin-left:0.5rem;color:var(--ink-faint);">${e.time}</span>`:''}<p style="margin:0.25rem 0 0;color:var(--ink-tertiary);font-size:0.82rem;font-family:var(--mono);">${e.evidence}</p></div></div>`;});}
+if((a.mitre||[]).length){h+='<label class="lbl mt-lg">MITRE ATT&CK</label><div class="ioc-grid">';a.mitre.forEach(m=>h+=`<span class="pill pill-info">${m}</span>`);h+='</div>';}
+if((a.recommendations||[]).length){h+='<div class="mt-lg" style="padding:1rem;border-radius:var(--r-md);background:var(--bg-elev);border:1px solid var(--border);"><strong style="display:block;margin-bottom:0.5rem;"><i class="fa-solid fa-wrench mr-1"></i> Recommendations</strong><ul style="margin:0;padding-left:1.2rem;line-height:1.8;font-size:0.88rem;color:var(--ink-secondary);">';a.recommendations.forEach(r=>h+=`<li>${r}</li>`);h+='</ul></div>';}
+resEl.innerHTML=h;}
+</script>
+</body>
+</html>

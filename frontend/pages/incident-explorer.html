@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IncidentIQ — DFIR Explorer · CyberAce</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%234f46e5'/%3E%3Ctext x='50' y='68' text-anchor='middle' font-family='Inter' font-weight='700' font-size='52' fill='white'%3EC%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"><link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav><div class="container" style="display:flex;align-items:center;justify-content:space-between;width:100%;"><a href="../index.html" class="logo"><div class="logo-mark">C</div><span>Cyber<span class="logo-accent">Ace</span></span></a><a href="../index.html#tools" class="btn btn-ghost text-sm"><i class="fa-solid fa-arrow-left"></i> All Tools</a></div></nav>
+<div class="container">
+<section class="page-header">
+    <div style="display:flex;gap:1rem;align-items:flex-start;">
+        <div class="bento-icon" style="width:52px;height:52px;border-radius:12px;font-size:1.25rem;background:#eff6ff;color:#2563eb;"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+        <span class="tool-badge"><i class="fa-solid fa-bug"></i> DFIR & Threat Hunting</span>
+    </div>
+    <h1>Incident<span class="serif" style="color:#2563eb;">IQ</span></h1>
+    <p class="desc">Describe an incident, upload artifacts (Windows Event logs, memory strings, shell history, email headers, PCAP summaries), or paste a suspicious script. AI produces a full DFIR report with timeline, TTPs, IOCs, containment, and remediation.</p>
+</section>
+<div class="grid-2">
+<div>
+    <label class="lbl">Incident / Artifact Description</label>
+    <textarea id="inc" class="textarea" placeholder="Describe the incident or paste artifacts: email headers, PowerShell commands, event log excerpts, malware strings..."></textarea>
+    <div class="mt-lg">
+        <div class="upload-zone" id="dz"><i class="fa-solid fa-file-arrow-up"></i><p><strong>Drop artifact file (optional)</strong></p><small>.txt · .log · .eml · .csv</small><input type="file" id="file" accept=".txt,.log,.eml,.csv,.json,.ps1,.bat,.sh"></div>
+        <p id="fn" class="mono text-sm" style="color:var(--ink-tertiary);margin-top:0.5rem;display:none;"></p>
+    </div>
+    <button id="go" class="btn btn-primary mt-lg" style="width:100%;justify-content:center;padding:0.9rem;"><i class="fa-solid fa-microchip"></i> Run DFIR Analysis</button>
+</div>
+<div><div class="result-panel" id="res"><div style="text-align:center;padding:4rem 2rem;color:var(--ink-tertiary);"><i class="fa-solid fa-magnifying-glass-chart" style="font-size:2.5rem;opacity:0.15;margin-bottom:1rem;display:inline-block;background:linear-gradient(135deg,#2563eb,#4f46e5);-webkit-background-clip:text;background-clip:text;color:transparent;"></i><p style="font-size:0.92rem;">Paste artifact or describe incident.</p></div></div></div>
+</div>
+<footer><div class="flex-between flex-wrap gap-3"><a href="../index.html" class="back-link" style="margin-bottom:0;"><i class="fa-solid fa-arrow-left"></i> All tools</a><span>© 2026 CyberAce</span></div></footer>
+</div>
+<script src="../js/main.js"></script>
+<script>
+const dz=document.getElementById('dz'),fi=document.getElementById('file'),fn=document.getElementById('fn'),inc=document.getElementById('inc'),btn=document.getElementById('go'),res=document.getElementById('res');
+let at=null;
+['dragenter','dragover'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('drag');}));
+['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.remove('drag');}));
+dz.addEventListener('drop',ev=>{if(ev.dataTransfer.files[0])h(ev.dataTransfer.files[0]);});
+fi.addEventListener('change',ev=>{if(ev.target.files[0])h(ev.target.files[0]);});
+async function h(f){fn.textContent=f.name;fn.style.display='block';at=await readText(f);dz.innerHTML=`<i class="fa-solid fa-file-lines" style="font-size:1.75rem;color:#2563eb;margin-bottom:0.5rem;display:block;"></i><p><strong>${f.name}</strong></p><small>Artifact loaded · ${f.size} bytes</small><input type="file" id="file" accept=".txt,.log,.eml,.csv,.json,.ps1,.bat,.sh">`;}
+btn.addEventListener('click',async()=>{const t=inc.value.trim()+(at?'\n\n--- ARTIFACT ---\n'+at.slice(0,12000):'');if(!t){inc.style.borderColor='var(--danger)';setTimeout(()=>inc.style.borderColor='',800);return;}
+btn.disabled=true;btn.innerHTML='<span class="loader"></span> Analyzing…';res.innerHTML='<div class="thinking"><span class="loader"></span><span>Correlating IOCs, building timeline, mapping TTPs…</span></div>';
+const sys='You are a senior DFIR analyst. Return JSON: {"incident_type":"type","severity":"Low/Medium/High/Critical","summary":"executive summary","ttps":[{"id":"MITRE T-ID","name":"technique","detail":"evidence"}],"iocs":{"ips":[],"domains":[],"hashes":[],"files":[],"registry":[]},"timeline":[{"time":"when","event":"what happened"}],"containment":["immediate actions"],"eradication":["steps"],"lessons":["post-incident recommendations"]}.';
+try{const r=await fetch(window.API+'/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:sys,prompt:'DFIR analysis of:\n\n'+t.slice(0,14000),json:true})});const d=await r.json();if(d.error)throw 0;let a=JSON.parse(d.result.replace(/```json/g,'').replace(/```/g,'').trim());render(a);}
+catch(e){render({incident_type:'Unknown',severity:'Medium',summary:'AI unavailable. Add GROQ_API_KEY as Render Secret File.',ttps:[],iocs:{ips:[],domains:[],hashes:[],files:[],registry:[]},timeline:[],containment:['Isolate affected hosts'],eradication:['Rebuild from known good'],lessons:['Enable detailed logging']});}
+btn.disabled=false;btn.innerHTML='<i class="fa-solid fa-microchip"></i> Run DFIR Analysis';});
+function render(a){const s=a.severity||'Medium';const pc=s==='Critical'?'pill-critical':s==='High'?'pill-high':s==='Medium'?'pill-medium':'pill-low';
+let h=`<div class="flex-between mb-lg"><div><label class="lbl">Incident Assessment</label><h3 style="font-size:1.3rem;margin:0.1rem 0 0;">${a.incident_type}</h3></div><span class="pill ${pc}">${s}</span></div><p style="line-height:1.7;font-size:0.95rem;">${a.summary}</p>`;
+if((a.ttps||[]).length){h+='<label class="lbl mt-lg">MITRE ATT&CK TTPs</label>';a.ttps.forEach(t=>h+=`<div class="finding"><span class="pill pill-info" style="font-size:0.72rem;flex-shrink:0;margin-top:0.15rem;">${t.id}</span><div><strong>${t.name}</strong><p style="margin:0.2rem 0 0;font-size:0.86rem;color:var(--ink-tertiary);">${t.detail}</p></div></div>`);}
+const iocs=a.iocs||{};const cats=[['ips','Suspicious IPs','fa-globe'],['domains','Suspicious Domains','fa-globe'],['hashes','Hashes','fa-hashtag'],['files','Files / Paths','fa-file'],['registry','Registry Keys','fa-key']];
+let iocsDone=false;cats.forEach(([k,lbl,ic])=>{if((iocs[k]||[]).length){if(!iocsDone){h+='<label class="lbl mt-lg">Indicators of Compromise</label>';iocsDone=true;}h+=`<div class="finding"><i class="fa-solid ${ic}" style="color:#2563eb;margin-top:0.15rem;"></i><div><strong style="font-size:0.8rem;color:var(--ink-tertiary);text-transform:uppercase;letter-spacing:0.04em;">${lbl}</strong><div class="ioc-grid" style="margin-top:0.3rem;">${iocs[k].map(v=>`<span class="ioc mono text-sm">${v}</span>`).join('')}</div></div></div>`;}});
+if((a.timeline||[]).length){h+='<label class="lbl mt-lg">Timeline</label><div style="border-left:2px solid var(--border);padding-left:1rem;margin-left:0.5rem;">';a.timeline.forEach(t=>{h+=`<div style="position:relative;padding-bottom:0.8rem;"><div style="position:absolute;left:-1.35rem;top:0.3rem;width:0.55rem;height:0.55rem;border-radius:50%;background:var(--accent);border:2px solid var(--bg);"></div><p class="mono text-sm" style="color:var(--ink-faint);margin:0;">${t.time||''}</p><p style="margin:0.15rem 0 0;font-size:0.9rem;">${t.event}</p></div>`;});h+='</div>';}
+const steps=[['containment','Containment (Immediate)','fa-fire-extinguisher','var(--danger)'],['eradication','Eradication','fa-broom','var(--warning)'],['lessons','Post-Incident Recommendations','fa-graduation-cap','var(--accent)']];
+steps.forEach(([k,lbl,ic,col])=>{if((a[k]||[]).length){h+=`<div style="margin-top:1.25rem;padding:1rem;border-radius:var(--r-md);background:var(--bg-elev);border:1px solid var(--border);"><strong style="display:flex;align-items:center;gap:0.4rem;margin-bottom:0.5rem;"><i class="fa-solid ${ic}" style="color:${col};"></i>${lbl}</strong><ol style="margin:0;padding-left:1.2rem;line-height:1.8;font-size:0.88rem;color:var(--ink-secondary);">${a[k].map(s=>'<li>'+s+'</li>').join('')}</ol></div>`;}});
+res.innerHTML=h;}
+</script>
+</body>
+</html>
